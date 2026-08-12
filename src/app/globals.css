@@ -1,26 +1,616 @@
 @import "tailwindcss";
 
+/* =============================================================================
+   DESIGN SYSTEM — arthurtachini.dev
+   Single source of truth for colour, type and rhythm. Nothing in a component
+   should introduce a value that is not derived from this file.
+   ========================================================================== */
+
+@theme {
+  /* --- Palette -------------------------------------------------------------
+     Six tokens, no more. `accent-ink` and `muted-ink` are not new colours:
+     they are the accent and the muted grey as they are re-toned inside the
+     contact panel, which is the one surface that belongs to neither scheme —
+     the values here are only what the utilities are generated from, and the
+     panel itself re-points them (see `[data-scheme="ink"]`).
+
+     Dark is the identity, so the dark scheme is the base and light is the
+     override — see `[data-theme="light"]` in @layer base. The accent is a
+     burnt copper rather than the violet-on-black every generated portfolio
+     ships with; it is also, literally, the colour of the wire the page is
+     built around.
+     Measured contrast against --color-paper:
+       ink 15.1:1 · accent 5.4:1 · muted 6.4:1                                */
+  --color-paper: #0b0c0e;
+  --color-raised: #14161a;
+  --color-ink: #ece7df;
+  --color-muted: #97938c;
+  --color-rule: #2a2c31;
+  --color-accent: #d2683a;
+  --color-accent-ink: #d2683a;
+  --color-muted-ink: #97938c;
+
+  /* The hot core of a wire under load. Only ever used at small sizes and
+     never for text — it is a light source, not a colour role. */
+  --color-filament: #ffb079;
+
+  /* --- The panel -----------------------------------------------------------
+     The contact section is the one full-bleed surface on the site, and the
+     only place the cable arrives at rather than passes through. It starts as
+     an unlit panel — the same near-black in both schemes, because inverting
+     to the page's own colour is not an inversion — and turns the colour of
+     the wire when the cable plugs into it. Both states carry the same three
+     tones, so nothing has to be re-toned mid-transition.
+     Measured contrast, unlit · lit:
+       ink 15.9:1 · 6.5:1   muted 11.1:1 · 4.6:1   hot 13.4:1 · 5.5:1        */
+  --color-panel-off: #14161a;
+  --color-panel: #8f3c17;
+  --color-panel-ink: #f6efe7;
+  --color-panel-muted: #e8c4a8;
+  --color-panel-hot: #ffd6b0;
+
+  /* --- Type roles ----------------------------------------------------------
+     Three roles. Display is a grotesk, body is a serif — the inversion is
+     deliberate and is part of the identity.                                 */
+  --font-display: var(--font-schibsted), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-newsreader), ui-serif, Georgia, serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, SFMono-Regular, monospace;
+
+  /* --- Type scale ----------------------------------------------------------
+     Fluid between a 360px and a 1440px viewport. The step from display-l
+     (80px) to body-m (17px) is 4.7x — a jump, not an increment.             */
+  /* Hero only. Sized so the longest name line ("Henrique") runs the full
+     measure and pushes into the right gutter — grid break 1 of the 2 the
+     design plan allows. */
+  --text-display-hero: clamp(3.25rem, 11vw, 10.5rem);
+  --text-display-hero--line-height: 0.88;
+  --text-display-hero--letter-spacing: -0.05em;
+  --text-display-hero--font-weight: 800;
+
+  /* The name behind the portrait. Sized to run wider than the body standing
+     in front of it, so both words read past the shoulders at every width. */
+  --text-display-name: clamp(3.25rem, 21vw, 16rem);
+  --text-display-name--line-height: 0.82;
+  --text-display-name--letter-spacing: -0.055em;
+  --text-display-name--font-weight: 800;
+
+  --text-display-xl: clamp(3.25rem, 12.5vw, 11.5rem);
+  --text-display-xl--line-height: 0.86;
+  --text-display-xl--letter-spacing: -0.045em;
+  --text-display-xl--font-weight: 800;
+
+  --text-display-l: clamp(2.25rem, 6vw, 5rem);
+  --text-display-l--line-height: 0.92;
+  --text-display-l--letter-spacing: -0.035em;
+  --text-display-l--font-weight: 800;
+
+  --text-display-m: clamp(1.5rem, 3.2vw, 2.75rem);
+  --text-display-m--line-height: 1.05;
+  --text-display-m--letter-spacing: -0.02em;
+  --text-display-m--font-weight: 500;
+
+  /* A display step for type set *inside* something rather than on the page:
+     the name on a recommendation card. `display-m` tops out at 44px, which is
+     a heading, and a heading inside a 416px card competes with the one the
+     section already has. This is the smallest size the grotesk still reads as
+     display rather than as a bolded label. */
+  --text-display-s: clamp(1.25rem, 1.6vw, 1.625rem);
+  --text-display-s--line-height: 1.15;
+  --text-display-s--letter-spacing: -0.015em;
+  --text-display-s--font-weight: 600;
+
+  /* Running text.
+
+     Both steps scale with the viewport rather than sitting at one size. The
+     lede used to and the body did not, which on a 1900px screen left the one
+     paragraph the reader is asked to actually read at 17px next to a 22px
+     opener — the body read as a caption for the section above it. They now
+     move together, three steps apart the whole way. */
+  --text-body-l: clamp(1.1875rem, 1.05rem + 0.55vw, 1.5rem);
+  --text-body-l--line-height: 1.55;
+
+  --text-body-m: clamp(1.0625rem, 0.95rem + 0.3vw, 1.25rem);
+  --text-body-m--line-height: 1.6;
+
+  /* Running text set inside a card rather than on the page. The recommendations
+     are five long quotes on a rail the scroll pulls sideways, and their height
+     is what decides how long any one of them is fully in the window to be read
+     in — a step down here buys reading time that no amount of tuning the
+     scroll can. Still a reading size: this is the floor, not a caption.
+
+     It tops out a step below `body-m` rather than level with it. Quoted text
+     inside a card is not the page speaking, and at the same size as the page's
+     own running text it stops reading as a quotation and starts competing with
+     it — the card is doing that work already. The small end is unchanged: on a
+     phone the cards are the full column width and 15px is as low as 190 words
+     of serif should go. */
+  --text-body-s: clamp(0.9375rem, 0.9rem + 0.1vw, 1rem);
+  --text-body-s--line-height: 1.6;
+
+  /* Labels and metadata. Small on purpose — they are annotation, not text —
+     but not fixed: at 13px they were the same size on a laptop and on a 27in
+     display, which is where they stopped being legible as a column. */
+  --text-mono-m: clamp(0.8125rem, 0.7rem + 0.22vw, 0.9375rem);
+  --text-mono-m--line-height: 1.45;
+  --text-mono-m--letter-spacing: 0.08em;
+
+  --text-mono-s: clamp(0.6875rem, 0.62rem + 0.13vw, 0.78125rem);
+  --text-mono-s--line-height: 1.4;
+  --text-mono-s--letter-spacing: 0.12em;
+}
+
+/* --- Rhythm ----------------------------------------------------------------
+   Only these steps of Tailwind's default 4px scale are allowed:
+     1(4) 2(8) 3(12) 4(16) 6(24) 8(32) 12(48) 16(64) 24(96) 36(144) 54(216)
+   Related content groups at 6-12. A change of subject opens to 36-54. The
+   uneven gap is what stops every section reading as the same size box.
+   -------------------------------------------------------------------------- */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --gutter: 1.25rem;
+  /* Room down the left of every container for the cable to run in.
+     Zero on a phone, where there is no width to give away and the cable hugs
+     the gutter instead.
+
+     This is the only way the cable can be promised never to cross type. The
+     page has no dead column it can be routed down: the grid's own empty
+     columns are empty in the hero and in About and are the Stack list
+     everywhere else, and the margin outside the container disappears entirely
+     below 1480px, where the container stops being narrower than the window.
+     Measuring for a gap that is not there produces a route that is over text
+     in half the sections. So the gap is reserved rather than found.
+
+     Narrow on a phone, where 20px is already most of what a single column can
+     spare, and the bundle is drawn tighter to match — see WIRE.strandSpread. */
+  --cable-lane: 1.25rem;
+  --focus-color: var(--color-accent);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+@media (min-width: 1024px) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --gutter: 2.5rem;
+    --cable-lane: 5rem;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  /* --- Light scheme --------------------------------------------------------
+     Not a second design: the same six roles, re-pointed. Written in a layer
+     after `theme` so it wins over the @theme defaults, and keyed off the
+     attribute the pre-paint script sets (see lib/theme.ts) rather than a media
+     query, so an explicit choice can override the OS.
+     Measured contrast against --color-paper:
+       ink 15.6:1 · accent 5.6:1 · muted 6.9:1                                */
+  :root {
+    color-scheme: dark;
+  }
+
+  :root[data-theme="light"] {
+    --color-paper: #efebe4;
+    --color-raised: #f8f5f0;
+    --color-ink: #16181c;
+    --color-muted: #5b5952;
+    --color-rule: #d3cec4;
+    --color-accent: #9e3f16;
+    --color-filament: #c2521f;
+    color-scheme: light;
+  }
+
+  html {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    /* Only the page shell crossfades on a scheme change. Transitioning
+       everything would mean a repaint of the whole document on one click. */
+    transition:
+      background-color 200ms linear,
+      color 200ms linear;
+  }
+
+  /* Lenis drives scroll position; the native smooth behaviour would fight it. */
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+  .lenis.lenis-stopped {
+    overflow: hidden;
+  }
+
+  body {
+    overflow-x: clip;
+  }
+
+  /* One ring, drawn by us, everywhere. Never the browser default. */
+  :focus-visible {
+    outline: 2px solid var(--focus-color);
+    outline-offset: 3px;
+  }
+
+  /* The single region of the site that leaves the page surface, in both
+     schemes, so it is the one block written in absolute colours rather than in
+     the scheme's own roles. `--color-paper` is re-pointed inside it, which is
+     what lets every `text-paper` in the contact section keep meaning "the
+     readable one" without the component knowing what it is sitting on.
+
+     Both surfaces are here at once. The section itself is the unlit plate the
+     wire is running towards; the colour of the wire is a layer inside it that
+     the cable slides down as the reader scrolls — see `[data-panel-fill]`. Every
+     tone below clears 4.5:1 on both, which is the only reason a boundary is
+     allowed to cross the type at all. */
+  [data-scheme="ink"] {
+    --focus-color: var(--color-panel-hot);
+    --color-paper: var(--color-panel-ink);
+    --color-accent-ink: var(--color-panel-hot);
+    --color-muted-ink: var(--color-panel-muted);
+    position: relative;
+    overflow: clip;
+    background-color: var(--color-panel-off);
+    color: var(--color-paper);
+  }
+
+  /* Taller than the section by its own soft edge, and moved rather than
+     redrawn: the fill is one transform per frame on one element, where a
+     gradient recomputed against the scroll would be a full repaint of the
+     largest box on the page. At rest it covers the section, so a reader whose
+     scroll layer never ran gets the panel rather than the plate.
+
+     The edge is not level: the wires come down the left of the page, so the
+     colour has to reach the left of the panel first and run off towards the
+     right, which is a `skewY` on the same transform that slides it (see
+     `FILL_SKEW` in CableTrace). Skewed about its own left edge, so the left of
+     the panel is where the colour arrives at and the right is held back by
+     `--fill-slant` — the panel's own width through that angle, which is the
+     extra height: the bottom-right corner is lifted by exactly that much and
+     would otherwise leave a wedge of bare plate behind a filled panel. */
+  [data-panel-fill] {
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    height: calc(100% + 160px + var(--fill-slant, 0px));
+    transform-origin: 0 0;
+    background-image: linear-gradient(
+      to bottom,
+      var(--color-panel) 0,
+      var(--color-panel) calc(100% - 160px),
+      transparent 100%
+    );
+    will-change: transform;
+  }
+
+  ::selection {
+    background-color: var(--color-accent);
+    color: var(--color-paper);
+  }
+  [data-scheme="ink"] ::selection {
+    background-color: var(--color-panel-hot);
+    color: var(--color-panel);
+  }
+}
+
+@layer components {
+  /* Centred measure for the page. */
+  .shell {
+    width: 100%;
+    max-width: 90rem;
+    margin-inline: auto;
+    padding-left: calc(var(--gutter) + var(--cable-lane));
+    padding-right: var(--gutter);
+  }
+
+  /* The editorial grid: a narrow metadata column running beside the main
+     content, and dead space on the right that is never filled. */
+  .grid-editorial {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    column-gap: 1.5rem;
+    row-gap: 2rem;
+  }
+  @media (min-width: 1024px) {
+    .grid-editorial {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+    }
+  }
+
+  /* Where the running text starts, as a length rather than as a box.
+     `.shell` gets there with a max-width and auto margins, which also boxes
+     whatever is inside it. This is the same edge for the one thing that has to
+     line up with the text and must *not* be boxed by it — the recommendation
+     rail, which runs off the right of the window on purpose. Same three terms
+     as `.shell` above, in the same order; if that padding changes, this changes
+     with it.
+     The percentage resolves against the element's own containing block, which
+     is the full-bleed stage — not `100vw`, which would count a scrollbar the
+     container never had and put the first card a few px off the paragraph
+     above it. */
+  .shell-inset {
+    padding-left: calc(max(0px, (100% - 90rem) / 2) + var(--gutter) + var(--cable-lane));
+  }
+
+  /* The one deliberate grid break: the hero name running past the container.
+     Nothing else in the site uses it. */
+  .bleed-right {
+    margin-right: calc(var(--gutter) * -1);
+  }
+
+  /* --- The recommendation cards -------------------------------------------
+     The only cards on the site. Everything else here is type on the page, and
+     that is what earns these the surface: five people's words, each one a
+     separate voice that is not the site's, and a raised panel is what says so
+     without a rule around every paragraph.
+     A card is opaque, and that is still load-bearing: the rail slides left into
+     the lane the cable runs down, and the cable passes behind these rather than
+     over them. Which needs the stacking order set on the section.           */
+  .quote-card {
+    background-color: var(--color-raised);
+    border: 1px solid var(--color-rule);
+    border-radius: 0.625rem;
+  }
+
+  /* The rail is a stacking context of its own, because the scroll transforms
+     it. That is the whole reason its z-index cannot be the one that matters:
+     nothing inside a stacking context can be lifted out of it, and the pinned
+     box it sits in is another one again. What sits above the cable is the
+     section — see the `z-30` in Testimonials.tsx — and this is only what the
+     cards are painted onto. */
+  .quote-rail {
+    position: relative;
+  }
+
+  /* The toggle shows the scheme it switches to, so exactly one icon is ever
+     visible. Driven by the attribute rather than React state, which is what
+     makes it correct on the first painted frame. */
+  .theme-toggle [data-icon="sun"] {
+    display: none;
+  }
+  :root[data-theme="dark"] .theme-toggle [data-icon="sun"] {
+    display: block;
+  }
+  :root[data-theme="dark"] .theme-toggle [data-icon="moon"] {
+    display: none;
+  }
+
+  /* Section shell. The uneven vertical rhythm lives here: a big opening gap
+     between subjects, tight grouping inside. */
+  .section {
+    padding-block: 6rem;
+  }
+  @media (min-width: 1024px) {
+    .section {
+      padding-block: 9rem;
+    }
+  }
+
+  .hairline {
+    border: 0;
+    border-top: 1px solid var(--color-rule);
+  }
+  [data-scheme="ink"] .hairline {
+    border-top-color: color-mix(in srgb, var(--color-paper) 22%, transparent);
+  }
+
+  .measure {
+    max-width: 65ch;
+  }
+
+  /* The only light source in the hero, and the reason the copper in the
+     filaments is not arbitrary: it is the colour of what he is standing in. */
+  .hero-halo {
+    opacity: calc(1 - var(--dissolve));
+    background: radial-gradient(
+      closest-side,
+      color-mix(in srgb, var(--color-accent) 15%, transparent),
+      color-mix(in srgb, var(--color-accent) 4%, transparent) 55%,
+      transparent 72%
+    );
+  }
+  :root[data-theme="light"] .hero-halo {
+    opacity: calc((1 - var(--dissolve)) * 0.5);
+  }
+
+  /* --- The portrait, and what it turns into -------------------------------
+     `--dissolve` (0 → 1) is written on `.portrait-stage` by the scroll scrub,
+     and inherited by everything the transformation touches. It is the single
+     number the whole hero transformation is driven by: this mask erodes the
+     photograph from the bottom edge upward, the halo behind it goes out on the
+     same curve, and the canvas beside it releases its particles on the same
+     schedule, so material appears to leave the body exactly where the
+     photograph stops being there.
+     The soft edge is 16% tall and sits *below* the bottom of the frame at
+     rest — otherwise the photograph would arrive already fading out along its
+     own bottom edge — and has cleared the top of it by the time the scrub
+     finishes, which is what the 130% is for.                                */
+  .portrait-stage {
+    --dissolve: 0;
+  }
+
+  .portrait-veil {
+    -webkit-mask-image: linear-gradient(
+      to top,
+      transparent calc(var(--dissolve) * 130% - 16%),
+      #000 calc(var(--dissolve) * 130%)
+    );
+    mask-image: linear-gradient(
+      to top,
+      transparent calc(var(--dissolve) * 130% - 16%),
+      #000 calc(var(--dissolve) * 130%)
+    );
+  }
+
+  /* The wire that leaves the hero and runs the rest of the page. Above the
+     content rather than behind it — the contact section is an opaque panel
+     and would swallow it — so everything in here is unclickable except the
+     nodes, and the stroke opacity is kept low enough that it never competes
+     with text it crosses. */
+  .cable-layer {
+    position: absolute;
+    inset: 0;
+    z-index: 20;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  /* The dot marks the point, so the dot is what gets placed — the row is
+     shifted by half a dot, not centred on its own width. Centred, the dot sits
+     half a label away from the cable it is supposed to be a node on. */
+  .cable-node {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    pointer-events: auto;
+    transform: translate(-4.5px, -50%);
+    color: var(--color-muted);
+    transition: color 200ms var(--ease-micro, ease);
+  }
+  /* `data-label` is the side the label opens on, and the cable picks it to keep
+     labels off the running text. Opening left puts the dot at the end of the
+     row, so the row hangs from its own right edge instead. */
+  .cable-node[data-label="left"] {
+    flex-direction: row-reverse;
+    transform: translate(calc(-100% + 4.5px), -50%);
+  }
+
+  .cable-node-dot {
+    position: relative;
+    display: block;
+    width: 9px;
+    height: 9px;
+    flex: none;
+    border-radius: 50%;
+    border: 1px solid var(--color-rule);
+    background-color: var(--color-paper);
+    transition:
+      border-color 200ms ease,
+      background-color 200ms ease,
+      box-shadow 200ms ease;
+  }
+
+  .cable-node-label {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-s);
+    letter-spacing: var(--text-mono-s--letter-spacing);
+    text-transform: uppercase;
+    white-space: nowrap;
+    opacity: 0;
+    transform: translateX(-4px);
+    transition:
+      opacity 200ms ease,
+      transform 200ms ease;
+  }
+  .cable-node[data-label="left"] .cable-node-label {
+    transform: translateX(4px);
+  }
+
+  /* Lit either by the reader (hover/focus) or by the page (the section this
+     node points at is the one being read). */
+  .cable-node:hover,
+  .cable-node:focus-visible,
+  .cable-node[data-active="true"] {
+    color: var(--color-ink);
+  }
+  .cable-node:hover .cable-node-dot,
+  .cable-node:focus-visible .cable-node-dot,
+  .cable-node[data-active="true"] .cable-node-dot {
+    border-color: var(--color-accent);
+    background-color: var(--color-accent);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-accent) 22%, transparent);
+  }
+  .cable-node:hover .cable-node-label,
+  .cable-node:focus-visible .cable-node-label,
+  .cable-node[data-active="true"] .cable-node-label {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  /* On a narrow screen the cable runs close to the left gutter, so a label lit
+     by the section being read lands on top of that section's own eyebrow. The
+     dot still marks the place and the label still opens on focus; it just stops
+     announcing itself over the text. Opacity rather than display, so the link
+     keeps its accessible name. */
+  @media (max-width: 1023px) {
+    .cable-node[data-active="true"]:not(:hover):not(:focus-visible) .cable-node-label {
+      opacity: 0;
+    }
+  }
+
+  .label {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-m);
+    line-height: var(--text-mono-m--line-height);
+    letter-spacing: var(--text-mono-m--letter-spacing);
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+  [data-scheme="ink"] .label {
+    color: var(--color-muted-ink);
+  }
+}
+
+@layer utilities {
+  /* The opening curtain exists in the markup on every visit but only becomes
+     visible when the pre-paint script says this is a first visit — which is
+     what stops a returning visitor seeing it flash. */
+  .intro-active .intro-curtain {
+    display: flex;
+  }
+  .intro-active {
+    overflow: hidden;
+  }
+
+  /* Elements the motion layer will reveal start hidden. The reduced-motion
+     block below makes sure they never stay hidden for a reader who has asked
+     not to be animated at. */
+  [data-reveal] {
+    opacity: 0;
+    will-change: transform, opacity;
+  }
+  [data-reveal-line] {
+    display: block;
+    overflow: hidden;
+  }
+
+  /* The blocks the contact panel is assembled from. Unlike `[data-reveal]`
+     these default to visible and are hidden by the cable once it has measured
+     them: the section holding the one form on the site must not depend on a
+     document-sized measurement having succeeded to be readable. */
+  [data-tap] {
+    transition:
+      opacity 600ms ease,
+      transform 600ms cubic-bezier(0.16, 0.84, 0.28, 1);
+  }
+  [data-tap][data-lit="false"] {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  /* Unlike a reveal, this runs backwards when the reader scrolls back up —
+     which must never be able to take the form away from underneath somebody
+     who is typing in it. Focus overrides the scroll. */
+  [data-tap][data-lit="false"]:focus-within {
+    opacity: 1;
+    transform: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-reveal] {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+    [data-tap][data-lit="false"] {
+      opacity: 1;
+      transform: none;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
 }
