@@ -173,6 +173,9 @@ const en: Dictionary = {
     // sentences to them that they never wrote, so the reader is told instead.
     note: "Quoted in the original Portuguese, as written.",
     people: {
+      "gabriel-gomes-rodrigues": { relation: "University classmate" },
+      "otavio-machado": { relation: "Teammate" },
+      "david-sidor": { relation: "Colleague" },
       "matheus-hagedorn": { relation: "University classmate" },
       "giordano-gava": { relation: "University classmate" },
       "walter-coan": { relation: "Professor at Univille" },

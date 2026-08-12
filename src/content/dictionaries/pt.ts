@@ -178,6 +178,9 @@ const pt = {
     // Só a relação de cada pessoa com o Arthur. O que elas disseram está em
     // src/content/testimonials.ts, com as palavras delas.
     people: {
+      "gabriel-gomes-rodrigues": { relation: "Colega de universidade" },
+      "otavio-machado": { relation: "Colega de equipe" },
+      "david-sidor": { relation: "Colega de trabalho" },
       "matheus-hagedorn": { relation: "Colega de universidade" },
       "giordano-gava": { relation: "Colega de universidade" },
       "walter-coan": { relation: "Professor na Univille" },

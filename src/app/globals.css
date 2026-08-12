@@ -1,5 +1,20 @@
 @import "tailwindcss";
 
+/* The window the recommendation rail is allowed to be a rail in — the CSS half
+   of `MEDIA.railPin` in src/lib/motion/config.ts, with the same three
+   conditions, and the two have to stay in step.
+
+   The rail lays out sideways only where the pin exists to transport it.
+   Anywhere else the cards stack and are read by scrolling the page, the way
+   they are on a phone. Sideways with nothing driving it is the one arrangement
+   that loses recommendations: the band keeps its own horizontal scrollbar, so
+   the page scrolls straight past a rail showing two of the eight cards and the
+   other six are behind a scrollbar nobody goes looking for.
+
+   Written out rather than derived, because a media query cannot read a
+   var(). If PIN_MIN_WIDTH or PIN_MIN_HEIGHT move, move these with them.      */
+@custom-variant rail-pin (@media (min-width: 1024px) and (min-height: 760px) and (prefers-reduced-motion: no-preference));
+
 /* =============================================================================
    DESIGN SYSTEM — arthurtachini.dev
    Single source of truth for colour, type and rhythm. Nothing in a component
@@ -113,7 +128,7 @@
   --text-body-m--line-height: 1.6;
 
   /* Running text set inside a card rather than on the page. The recommendations
-     are five long quotes on a rail the scroll pulls sideways, and their height
+     are eight long quotes on a rail the scroll pulls sideways, and their height
      is what decides how long any one of them is fully in the window to be read
      in — a step down here buys reading time that no amount of tuning the
      scroll can. Still a reading size: this is the floor, not a caption.
@@ -339,7 +354,7 @@
 
   /* --- The recommendation cards -------------------------------------------
      The only cards on the site. Everything else here is type on the page, and
-     that is what earns these the surface: five people's words, each one a
+     that is what earns these the surface: eight people's words, each one a
      separate voice that is not the site's, and a raised panel is what says so
      without a rule around every paragraph.
      A card is opaque, and that is still load-bearing: the rail slides left into

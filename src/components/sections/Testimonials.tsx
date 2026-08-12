@@ -11,7 +11,7 @@ import { useLineReveal, useRevealOnScroll } from "@/lib/motion/hooks";
 import { gsap } from "@/lib/motion/register";
 
 /**
- * Five recommendations, as cards on a rail, and the one place on the page where
+ * Eight recommendations, as cards on a rail, and the one place on the page where
  * the scroll stops moving the page.
  *
  * When the section fills the window it is held there, and from that moment the
@@ -43,19 +43,30 @@ import { gsap } from "@/lib/motion/register";
  * shifts as the pin engages.
  *
  * Widths carry the difference in length. These are somebody else's sentences,
- * quoted whole, and they run from 45 words to 190 — a rail of equal cards makes
+ * quoted whole, and they run from 40 words to 157 — a rail of equal cards makes
  * every one of them as tall as the longest, and four fifths of the band is then
- * empty. So the long one gets a wide card and the rest get a narrow one, which
+ * empty. So the long ones get a wide card and the rest get a narrow one, which
  * puts them within a few lines of each other; the little that is left over is
  * white space inside a card, which is what a card is for. The wide card is also
  * what keeps the tallest card short enough for the composition to fit a window.
  *
- * Where there is no pin — a phone, a short window, reduced motion, or a display
- * wide enough that the whole rail already fits — the band is a plain scroll
- * container and every card is reachable by ordinary means. That is the default
- * state in the markup; the pin takes it away and puts it back (see
- * `useRailScrub`), so the arrangement that needs no JavaScript is the one the
- * page ships with.
+ * Where there is no pin — a phone, a short window, reduced motion — the cards
+ * are not a rail at all. They stack, and the page is scrolled down them the way
+ * every other section is read. That is the default state in the markup and the
+ * `rail-pin:` variant is what turns it sideways, on exactly the three
+ * conditions `useRailScrub` pins on, so the arrangement that needs no
+ * JavaScript is the one the page ships with.
+ *
+ * The rail must not outlive the pin, and that is the whole reason the variant
+ * exists rather than a plain `lg:`. A sideways rail with nothing transporting
+ * it keeps a horizontal scrollbar of its own and nothing else: the page scrolls
+ * past a band showing two of the eight cards, and the other six are behind a
+ * scrollbar the reader has no reason to look for. A window 1200 wide and 700
+ * tall is an ordinary laptop and it landed in exactly that state.
+ *
+ * The one case that is a rail without a pin is a display wide enough to fit the
+ * whole rail already — `useRailScrub` measures zero travel and pins nothing,
+ * which is correct, because everything is on screen.
  */
 export function Testimonials({ dict }: { dict: Dictionary }) {
   const scope = useRef<HTMLElement>(null);
@@ -89,7 +100,7 @@ export function Testimonials({ dict }: { dict: Dictionary }) {
           taller and scroll normally, which is better than clipping a card. */}
       <div
         ref={stage}
-        className="flex flex-col justify-center gap-16 lg:min-h-svh lg:gap-12"
+        className="flex flex-col justify-center gap-16 rail-pin:min-h-svh rail-pin:gap-12"
       >
         <div className="shell">
           <SectionHead
@@ -131,7 +142,7 @@ export function Testimonials({ dict }: { dict: Dictionary }) {
         <div ref={viewport} className="w-full overflow-x-auto [scrollbar-width:thin]">
           <ul
             ref={rail}
-            className="quote-rail shell-inset flex flex-col gap-6 pr-[var(--gutter)] pb-1 lg:w-max lg:flex-row lg:items-stretch lg:gap-6"
+            className="quote-rail shell-inset flex flex-col gap-6 pr-[var(--gutter)] pb-1 rail-pin:w-max rail-pin:flex-row rail-pin:items-stretch rail-pin:gap-6"
           >
             {TESTIMONIALS.map((person) => (
               <li
@@ -142,7 +153,23 @@ export function Testimonials({ dict }: { dict: Dictionary }) {
                 // works out to. Every px of card width is a px the rail has to
                 // travel in the same stretch of scroll, so width is bought back
                 // as reading time. See `useRailScrub`.
-                className={`flex ${wide.has(person.id) ? "lg:w-[46rem]" : "lg:w-[25rem]"}`}
+                //
+                // Both grades are set at the widest their measure will take:
+                // the narrow card lands around 68 characters a line, which is
+                // the middle of the range running text wants to be read at, and
+                // the wide one is already past it. Past these the line is long
+                // enough that the eye loses its place returning to the left
+                // edge, and the card would be trading height for a worse read
+                // rather than a shorter one.
+                //
+                // Stacked, the card has no rail to be narrower than, so the
+                // only thing setting its width is the measure — the same 50rem
+                // ceiling the wide card is held to, rather than the full width
+                // of a desktop window, which would run a quote out to 170
+                // characters a line.
+                className={`flex max-w-[50rem] ${
+                  wide.has(person.id) ? "rail-pin:w-[50rem]" : "rail-pin:w-[30rem]"
+                }`}
               >
                 <Card person={person} dict={dict} />
               </li>
@@ -200,7 +227,7 @@ function Card({ person, dict }: { person: Testimonial; dict: Dictionary }) {
  * The whole point of holding the page is that this number is authored rather
  * than inherited. Unpinned, the rail would have to cover its travel over
  * however tall the section happened to be, so the pace would be a side effect
- * of the length of five quotes — and that comes out at very nearly one to one,
+ * of the length of eight quotes — and that comes out at very nearly one to one,
  * which is a card and a half a flick and no reading any of them. Pinned, the
  * travel and the scroll are two independent numbers and this is the ratio
  * between them.
@@ -318,17 +345,28 @@ function useRailScrub(refs: {
  * Which cards are set wide.
  *
  * Not an editorial ranking — it is which quotes will not fit a narrow card
- * without making every card on the rail as tall as they are. So it comes off
- * the length of the text: anything well past the middle of the set gets the
- * wide card. Add a longer recommendation and it is handled with nothing else
- * touched.
+ * without making every card on the rail as tall as they are. That is a fact
+ * about one quote against one card width, so the threshold is an absolute
+ * number of characters and not a position in the set.
+ *
+ * It used to be a multiple of the median, and that was wrong in a way worth
+ * recording: the grade a card got depended on the *other* quotes. Adding two
+ * long recommendations pulled the median up past the quote that had been the
+ * reason the wide card existed, and every card on the rail silently went
+ * narrow — the tallest one twice the height of its neighbours, nothing in this
+ * file touched. A card is too tall or it is not; the rest of the list has no
+ * say in it.
+ *
+ * The number is where a quote stops fitting the narrow card in the height the
+ * pinned composition has to spare — a shade over half the longest one here, so
+ * the three long quotes take the wide card and the five short ones do not. It
+ * wants revisiting only if the card widths or `--text-body-s` move.
  */
+const WIDE_ABOVE_CHARS = 700;
+
 function widthGrades(people: readonly Testimonial[]): Set<string> {
   const length = (person: Testimonial) =>
     person.quote.reduce((total, paragraph) => total + paragraph.length, 0);
 
-  const sorted = [...people].map(length).sort((a, b) => a - b);
-  const median = sorted[Math.floor(sorted.length / 2)];
-
-  return new Set(people.filter((person) => length(person) > median * 1.7).map((p) => p.id));
+  return new Set(people.filter((person) => length(person) > WIDE_ABOVE_CHARS).map((p) => p.id));
 }

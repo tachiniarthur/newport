@@ -227,12 +227,17 @@ export const PIN_MIN_WIDTH = 1024;
  * Pinning holds a box that is meant to be exactly the window; in a window
  * shorter than this the recommendation rail's tallest card no longer fits one,
  * so the reader would be held in place looking at a card with its last lines
- * cut off. Below it the band falls back to an ordinary scroll container.
+ * cut off. Below it the cards stack and are read by scrolling the page.
  *
  * The number is measured, not chosen: heading, progress rule and the tallest
- * card come to 745px at the desktop card widths. If those widths change — or
+ * card come to 737px at the desktop card widths. If those widths change — or
  * the size the quotes are set at (`--text-body-s`) does — this changes with
  * them.
+ *
+ * It is also half of a pair. The `rail-pin` variant in globals.css repeats this
+ * number and PIN_MIN_WIDTH, because a CSS media query cannot read a value from
+ * here; the rail only lays out sideways where this says it can be pinned, and
+ * the two go stale together or not at all.
  */
 export const PIN_MIN_HEIGHT = 760;
 

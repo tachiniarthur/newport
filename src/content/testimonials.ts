@@ -17,7 +17,7 @@
  * breaks are the author's.
  *
  * OUTSTANDING DATA — do not invent, ask Arthur:
- *   FALTA: LinkedIn profile URL for all five people
+ *   FALTA: LinkedIn profile URL for all eight people
  */
 
 export type Testimonial = {
@@ -34,6 +34,38 @@ export type Testimonial = {
 
 /** Most recent first. */
 export const TESTIMONIALS: readonly Testimonial[] = [
+  {
+    id: "gabriel-gomes-rodrigues",
+    name: "Gabriel Gomes Rodrigues",
+    href: null, // FALTA
+    lang: "pt-BR",
+    quote: [
+      "Tive a oportunidade de estudar com o Arthur durante a graduação em Engenharia de Software na Univille e também de desenvolver alguns trabalhos acadêmicos ao lado dele. Durante esse período, pude perceber seu comprometimento, facilidade para aprender e principalmente sua capacidade de resolver problemas e buscar entender de fato os assuntos com os quais estava trabalhando. Sempre demonstrou bastante interesse pela área de desenvolvimento e uma boa disposição para contribuir nos trabalhos em grupo. Acompanhei também sua evolução ao longo da graduação e sua construção de uma carreira sólida na área de desenvolvimento de software. É um profissional dedicado, curioso e que está constantemente buscando evoluir tecnicamente. Recomendo o Arthur como um excelente profissional e acredito que ele tem muito a contribuir em equipes de desenvolvimento e projetos de tecnologia.",
+    ],
+  },
+  {
+    id: "otavio-machado",
+    name: "Otavio Machado",
+    href: null, // FALTA
+    lang: "pt-BR",
+    quote: [
+      "Trabalhei com o Arthur Tachini e posso atestar sua competência técnica como desenvolvedor. Ele demonstra domínio sólido em diferentes stacks e tecnologias, transitando entre elas com facilidade e sem perder qualidade na entrega.",
+      "Um ponto que se destaca é sua capacidade de propor soluções limpas e bem estruturadas, sempre pensando em manutenibilidade e boas práticas, não apenas em resolver o problema imediato, mas em deixar o código sustentável a longo prazo.",
+      "Também vale mencionar sua postura de aprendizado constante. O Arthur não se limita ao que já domina; busca ativamente entender novas ferramentas e abordagens, o que agrega valor ao time. Somado a isso, tem uma flexibilidade genuína nas entregas, se adaptando bem a mudanças de prioridade e prazo sem comprometer a qualidade do trabalho.",
+      "Recomendo o Arthur para posições que exijam solidez técnica, autonomia e capacidade de adaptação.",
+    ],
+  },
+  {
+    id: "david-sidor",
+    name: "David Sidor",
+    href: null, // FALTA
+    lang: "pt-BR",
+    quote: [
+      "Trabalhei por cerca de 2 anos com o Arthur Tachini e, durante esse período, pude acompanhar de perto seu profissionalismo e sua evolução. Arthur sempre se destacou pela boa comunicação, facilidade para trabalhar em equipe e pelo ótimo relacionamento com os colegas.",
+      "É um profissional que possui facilidade com diferentes tecnologias e projetos, além de estar sempre disposto a ajudar quem está ao seu redor. Também demonstra muita vontade de aprender, evoluir e contribuir para que todos possam crescer juntos.",
+      "Foi um prazer trabalhar com ele e, sem dúvidas, recomendo seu trabalho e profissionalismo.",
+    ],
+  },
   {
     id: "matheus-hagedorn",
     name: "Matheus Hagedorn",
