@@ -6,7 +6,7 @@ import { SectionHead } from "@/components/primitives/SectionHead";
 import type { Dictionary } from "@/content/dictionaries";
 import { CAREER_START_YEAR, yearsOfExperience } from "@/content/site";
 import { EASE, MEDIA } from "@/lib/motion/config";
-import { useLineReveal, useRevealOnScroll } from "@/lib/motion/hooks";
+import { useLineReveal, useRevealEach } from "@/lib/motion/hooks";
 import { gsap } from "@/lib/motion/register";
 import { useGSAP } from "@gsap/react";
 
@@ -20,7 +20,7 @@ export function About({ dict }: { dict: Dictionary }) {
   const inner = useRef<HTMLDivElement>(null);
 
   useLineReveal(scope);
-  useRevealOnScroll(scope);
+  useRevealEach(scope, "[data-reveal]");
   usePortraitMotion(scope, frame, inner);
 
   const experience = yearsOfExperience();

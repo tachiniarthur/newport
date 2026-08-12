@@ -8,7 +8,7 @@ import { SectionHead } from "@/components/primitives/SectionHead";
 import type { Dictionary } from "@/content/dictionaries";
 import { FEATURED_PROJECT, LISTED_PROJECTS, type Project } from "@/content/projects";
 import { DURATION, EASE, MEDIA } from "@/lib/motion/config";
-import { useLineReveal, useRevealOnScroll } from "@/lib/motion/hooks";
+import { useLineReveal, useRevealEach } from "@/lib/motion/hooks";
 import { gsap } from "@/lib/motion/register";
 
 import { ProjectFollower } from "./ProjectFollower";
@@ -45,7 +45,7 @@ export function Projects({ dict }: { dict: Dictionary }) {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
 
   useLineReveal(scope);
-  useRevealOnScroll(scope);
+  useRevealEach(scope, "[data-reveal]");
 
   const toggle = useCallback((id: string) => {
     setOpenId((current) => (current === id ? null : id));

@@ -92,18 +92,22 @@ export const STACK: readonly StackGroup[] = [
     id: "infra",
     items: [
       { name: "Docker", icon: "docker", where: ["face"] },
+      { name: "Jenkins", icon: "jenkins", where: ["softexpert"] },
+      { name: "Datadog", icon: "datadog", where: ["softexpert"] },
       { name: "Git", icon: "git", where: ["softexpert", "face", "personal"] },
-      {
-        name: "GitHub · GitLab · Bitbucket",
-        icon: "github",
-        where: ["softexpert", "face", "personal"],
-      },
+      { name: "GitHub", icon: "github", where: ["personal"] },
+      { name: "GitLab", icon: "gitlab", where: ["softexpert", "face"] },
+      { name: "Bitbucket", icon: "bitbucket", where: ["face"] },
     ],
   },
   {
     id: "quality",
     items: [
       { name: "Testes automatizados", icon: "check", where: ["softexpert", "personal"] },
+      { name: "PHPUnit", icon: "check", where: ["softexpert"] },
+      { name: "JUnit", icon: "junit", where: ["softexpert"] },
+      { name: "TestNG", icon: "check", where: ["softexpert"] },
+      { name: "Selenium WebDriver", icon: "selenium", where: ["softexpert"] },
     ],
   },
 ] as const;

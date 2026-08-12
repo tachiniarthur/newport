@@ -1,6 +1,11 @@
+"use client";
+
+import { useRef } from "react";
+
 import { AnchorLink } from "@/components/primitives/AnchorLink";
 import type { Dictionary } from "@/content/dictionaries";
 import { IDENTITY, SOCIALS, currentYear } from "@/content/site";
+import { useRevealEach } from "@/lib/motion/hooks";
 
 /** The sections the footer lists, in the order the page presents them. Same
  *  set the cable stops at, plus the one it lands on. */
@@ -19,14 +24,20 @@ const SECTIONS = ["about", "stack", "timeline", "projects", "testimonials", "con
  * actually want — the way back into any section, the accounts, the address.
  */
 export function Footer({ dict }: { dict: Dictionary }) {
+  const scope = useRef<HTMLElement>(null);
   const year = currentYear();
 
+  /* The last block on the page was also the only one that simply appeared. It
+     is a client component for this and for nothing else: no state, no effects
+     of its own, just a scope for the same reveal every section above it uses. */
+  useRevealEach(scope, "[data-reveal]");
+
   return (
-    <footer className="shell pt-28 pb-14 lg:pt-40 lg:pb-20">
+    <footer ref={scope} className="shell pt-28 pb-14 lg:pt-40 lg:pb-20">
       <hr className="hairline" />
 
       <div className="grid-editorial pt-12 lg:pt-20">
-        <div className="col-span-4 lg:col-span-8">
+        <div className="col-span-4 lg:col-span-8" data-reveal>
           <p className="font-display text-display-l text-ink">{IDENTITY.fullName}</p>
           <p className="label mt-5">
             {dict.hero.role}
@@ -39,7 +50,7 @@ export function Footer({ dict }: { dict: Dictionary }) {
       </div>
 
       <div className="grid-editorial pt-16 lg:pt-24">
-        <nav aria-label={dict.footer.navLabel} className="col-span-2 lg:col-span-3">
+        <nav aria-label={dict.footer.navLabel} className="col-span-2 lg:col-span-3" data-reveal>
           <h2 className="label">{dict.footer.navLabel}</h2>
           <ul className="mt-6 flex flex-col gap-3">
             {SECTIONS.map((id) => (
@@ -55,7 +66,7 @@ export function Footer({ dict }: { dict: Dictionary }) {
           </ul>
         </nav>
 
-        <div className="col-span-2 lg:col-span-3 lg:col-start-5">
+        <div className="col-span-2 lg:col-span-3 lg:col-start-5" data-reveal>
           <h2 className="label">{dict.footer.socialLabel}</h2>
           <ul className="mt-6 flex flex-col gap-3">
             {SOCIALS.map((social) => (
@@ -74,7 +85,7 @@ export function Footer({ dict }: { dict: Dictionary }) {
           </ul>
         </div>
 
-        <div className="col-span-4 lg:col-span-4 lg:col-start-9">
+        <div className="col-span-4 lg:col-span-4 lg:col-start-9" data-reveal>
           <h2 className="label">{dict.footer.contactLabel}</h2>
           <a
             href={`mailto:${IDENTITY.email}`}
@@ -87,7 +98,7 @@ export function Footer({ dict }: { dict: Dictionary }) {
 
       <hr className="hairline mt-20 lg:mt-28" />
 
-      <div className="flex flex-wrap items-baseline justify-between gap-x-8 gap-y-3 pt-6">
+      <div className="flex flex-wrap items-baseline justify-between gap-x-8 gap-y-3 pt-6" data-reveal>
         <p className="label text-ink">
           &copy; {year} {IDENTITY.fullName}
         </p>
