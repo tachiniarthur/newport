@@ -60,6 +60,7 @@ export const STACK: readonly StackGroup[] = [
     items: [
       { name: "Laravel", icon: "laravel", where: ["face", "personal"] },
       { name: "Spring Boot", icon: "springboot", where: ["personal"] },
+      { name: "FastAPI", icon: "fastapi", where: ["personal"] },
       { name: "Inertia", icon: "inertia", where: ["face", "personal"] },
       { name: "CodeIgniter", icon: "codeigniter", where: ["face"] },
     ],

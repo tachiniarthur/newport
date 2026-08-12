@@ -3,11 +3,11 @@
  * graphic on the share card.
  *
  * An entry is a *place*, not a post. That distinction is the whole shape of
- * this file: Arthur was at FACE Digital twice over — trainee, then full stack
- * junior — and at Univille for a degree and then a thesis, and a list of posts
- * renders each of those as two separate organisations arriving at two separate
- * points in his life, which is not what happened. So the posts are nested
- * inside the place that held them, and a place appears exactly once.
+ * this file: Arthur was at FACE Digital three times over (intern, then trainee,
+ * then full stack junior) and at Univille for a degree and then a thesis, and a
+ * list of posts renders each of those as separate organisations arriving at
+ * separate points in his life, which is not what happened. So the posts are
+ * nested inside the place that held them, and a place appears exactly once.
  *
  * `track` is what makes the share-card graphic carry information rather than
  * decoration — education and work ran in parallel from 2022 to 2026, and the
@@ -32,10 +32,10 @@ export type Milestone = {
   id: string;
   track: Track;
   organization: string;
-  /** Oldest first, so the entry reads as a progression: the promotion at FACE
-   *  is the point of holding two posts under one heading. */
+  /** Oldest first, so the entry reads as a progression: the two promotions at
+   *  FACE are the point of holding several posts under one heading. */
   roles: readonly Role[];
-  /** Derived from `roles` — see `place`. Never written by hand, so the span in
+  /** Derived from `roles` (see `place`). Never written by hand, so the span in
    *  the margin can never disagree with the posts beside it. */
   startYear: number;
   endYear: number | null;
@@ -63,8 +63,14 @@ const PLACES: readonly Milestone[] = [
 
   place("face", "work", "FACE Digital", [
     {
-      id: "face-trainee",
+      id: "face-estagio",
       startYear: 2022,
+      endYear: 2023,
+      tech: ["HTML", "CSS", "JavaScript", "Bootstrap", "MySQL", "Git"],
+    },
+    {
+      id: "face-trainee",
+      startYear: 2023,
       endYear: 2024,
       tech: ["PHP", "Laravel", "HTML", "CSS", "Sass", "Bootstrap", "JavaScript", "Docker"],
     },

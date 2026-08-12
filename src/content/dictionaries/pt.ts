@@ -43,8 +43,8 @@ const pt = {
     eyebrow: "Sobre",
     title: "Como eu trabalho",
     paragraphs: [
-      "Comecei no técnico do Senai em 2020 e entrei no mercado em 2022, na FACE Digital, onde passei de trainee a full stack júnior trabalhando em projetos Laravel com SOLID e DDD, Vue no front, MongoDB e Oracle nos dados. Também ajudei a formar os desenvolvedores que chegaram depois de mim.",
-      "Desde 2024 sou Engenheiro de Software na SoftExpert. Comecei no time OnDemand, construindo aplicações externas em PHP que customizavam a suíte da empresa e escrevendo as consultas SQL por trás delas. Hoje estou no APS — Archival, Protocol e Storeroom, componentes centrais da SoftExpert Suite —, onde liderei a implementação da infraestrutura de testes automatizados do time.",
+      "Comecei no técnico do Senai em 2020 e entrei no mercado em 2022, na FACE Digital, onde passei de estagiário a full stack júnior trabalhando em projetos Laravel com SOLID e DDD, Vue no front, MongoDB e Oracle nos dados. Também ajudei a formar os desenvolvedores que chegaram depois de mim.",
+      "Desde 2024 sou Engenheiro de Software na SoftExpert. Comecei no time OnDemand, construindo aplicações externas em PHP que customizavam a suíte da empresa e escrevendo as consultas SQL por trás delas. Hoje estou no APS (Archival, Protocol e Storeroom), componentes centrais da SoftExpert Suite, onde liderei a implementação da infraestrutura de testes automatizados do time.",
       "Esse último ponto virou meu trabalho de conclusão de curso na Univille: uma comparação entre testes unitários escritos à mão e testes gerados por inteligência artificial.",
     ],
     meta: {
@@ -91,6 +91,11 @@ const pt = {
       senai: {
         role: "Técnico em Desenvolvimento de Sistemas",
         summary: "Formação técnica em desenvolvimento de sistemas.",
+      },
+      "face-estagio": {
+        role: "Estagiário",
+        summary:
+          "Primeiro contato profissional com programação: telas em HTML, CSS e JavaScript, consultas em MySQL e o versionamento do time no Git.",
       },
       "face-trainee": {
         role: "Desenvolvedor Trainee",
@@ -203,6 +208,10 @@ const pt = {
       message: "Mensagem",
       submit: "Enviar",
       sending: "Enviando",
+    },
+    /** Assunto do e-mail que chega na caixa, seguido do nome de quem escreveu. */
+    mail: {
+      subject: "Contato pelo site:",
     },
     validation: {
       name: "Escreva seu nome.",

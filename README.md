@@ -9,7 +9,7 @@ scroll.
 
 ```bash
 npm install
-cp .env.example .env.local   # fill in the EmailJS keys, see "Contact form"
+cp .env.example .env         # fill in the SMTP credentials, see "Contact form"
 npm run dev
 npm run build                # production build, must pass with no warnings
 npx eslint src               # lint
@@ -28,7 +28,7 @@ src/
 │   │   ├── page.tsx              assembles the sections, in order
 │   │   └── opengraph-image.tsx   share card, prerendered per locale
 │   ├── actions/
-│   │   └── contact.ts            Server Action: validates, then calls EmailJS
+│   │   └── contact.ts            Server Action: validates, then sends via SMTP
 │   ├── globals.css               THE DESIGN SYSTEM — colour, type, rhythm
 │   ├── robots.ts
 │   └── sitemap.ts
@@ -207,24 +207,28 @@ copy for screen reader users.
 ## Contact form
 
 The form posts to a Server Action (`src/app/actions/contact.ts`) which validates
-on the server and then calls the EmailJS REST API. EmailJS is called from the
-server rather than the browser for two reasons: the validation requirement needs
-a server to run on, and the private key stays out of the bundle.
+on the server and then hands the message to Gmail over SMTP, using nodemailer.
+No third party sits between the form and the inbox. It runs on the server and
+not in the browser for two reasons: the validation requirement needs a server to
+run on, and the password stays out of the bundle, where it would be an open
+relay for anyone who reads it.
 
-Set four variables in Vercel (see `.env.example`):
+Set two variables in Vercel (see `.env.example`):
 
 ```
-EMAILJS_SERVICE_ID
-EMAILJS_TEMPLATE_ID
-EMAILJS_PUBLIC_KEY
-EMAILJS_PRIVATE_KEY
+SMTP_USER        the Gmail address that authenticates and sends
+SMTP_PASSWORD    a Google App Password, not the account password
 ```
 
-The EmailJS template should expect `from_name`, `reply_to` and `message`. In the
-EmailJS dashboard, **Account → Security → "Allow EmailJS API for non-browser
-applications"** must be enabled or the private key is rejected.
+The App Password is generated at <https://myaccount.google.com/apppasswords>,
+which requires two-step verification on the account.
 
-With any variable unset the form still renders and still validates — it tells
+The destination is `IDENTITY.email` in `src/content/site.ts`, so the form and
+the mailto link beside it cannot drift apart. nodemailer is declared in
+`serverExternalPackages` (`next.config.ts`): bundling it breaks its dynamic
+requires.
+
+With either variable unset the form still renders and still validates. It tells
 the visitor the form is not connected and points at the email address, rather
 than silently pretending to send. There is also a honeypot field.
 
