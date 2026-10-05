@@ -10,7 +10,7 @@
  * a `tRNS` chunk instead of a real channel, and the cut-out arrives as a black
  * rectangle. Normalise a new export before dropping it in:
  *   python3 -c "from PIL import Image; \
- *     Image.open('in.png').convert('RGBA').save('public/eu.png', optimize=True)"
+ *     Image.open('in.png').convert('RGBA').save('public/retrato.png', optimize=True)"
  */
 
 export type ImageAsset = {
@@ -20,21 +20,21 @@ export type ImageAsset = {
 };
 
 export const PORTRAIT: ImageAsset = {
-  src: "/imagem-eu.png",
-  width: 1101,
-  height: 1429,
+  src: "/retrato.png",
+  width: 1251,
+  height: 1600,
 };
 
 /**
  * The same picture at sampling resolution. The hero reads it pixel by pixel to
- * build the particle field, and reading a 1422px-wide PNG for a few thousand
+ * build the particle field, and reading a 1251px-wide PNG for a few thousand
  * samples would cost far more than it returns. Generated with:
- *   convert public/eu.png -resize 480x -strip -quality 78 public/eu-sample.webp
+ *   convert public/retrato.png -resize 480x -strip -quality 78 public/retrato-sample.webp
  * Regenerate it whenever the portrait changes, or the filaments will carry the
  * colours of the old photograph.
  */
 export const PORTRAIT_SAMPLE: ImageAsset = {
-  src: "/imagem-eu-sample.webp",
+  src: "/retrato-sample.webp",
   width: 480,
-  height: 623,
+  height: 614,
 };
